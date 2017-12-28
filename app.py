@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import zipfile
 from flask import Flask, request, redirect, url_for, flash, render_template
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = '/Users/cuiyb/workspace/upload-multi-files-one-shot'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'yaml'])
+UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
+ALLOWED_EXTENSIONS = set(['zip'])
 
 app = Flask(__name__)
 
@@ -30,6 +31,9 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(UPLOAD_FOLDER, filename))
+            zip_ref = zipfile.ZipFile(os.path.join(UPLOAD_FOLDER, filename), 'r')
+            zip_ref.extractall(UPLOAD_FOLDER)
+            zip_ref.close()
             return redirect(url_for('upload_file',
                                     filename=filename))
     return render_template('index.html')
