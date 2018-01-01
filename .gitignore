@@ -2,3 +2,4 @@
 *.yaml
 .idea/
 results*
+*.txt
